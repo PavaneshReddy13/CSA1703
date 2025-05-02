@@ -1,0 +1,31 @@
+from collections import deque
+print("192372103-pavanesh")
+def valid(m1, c1, m2, c2):
+    return all(x >= 0 and x <= 3 for x in [m1, c1, m2, c2]) and \
+           (m1 == 0 or m1 >= c1) and (m2 == 0 or m2 >= c2)
+
+def solve():
+    start = (3, 3, 0)
+    goal = (0, 0, 1)
+    visited = set()
+    q = deque([(start, [])])
+    moves = [(1,0), (2,0), (0,1), (0,2), (1,1)]
+
+    while q:
+        (m1, c1, b), path = q.popleft()
+        if (m1, c1, b) in visited: continue
+        visited.add((m1, c1, b))
+        if (m1, c1, b) == goal:
+            for step in path + [(m1, c1, b)]:
+                print(step)
+            return
+        for m, c in moves:
+            if b == 0:
+                nm1, nc1, nb = m1 - m, c1 - c, 1
+            else:
+                nm1, nc1, nb = m1 + m, c1 + c, 0
+            nm2, nc2 = 3 - nm1, 3 - nc1
+            if valid(nm1, nc1, nm2, nc2):
+                q.append(((nm1, nc1, nb), path + [(m1, c1, b)]))
+
+solve()
