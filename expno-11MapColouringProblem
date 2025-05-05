@@ -1,0 +1,50 @@
+# Map Coloring using CSP with Backtracking and Forward Checking
+print("192372103-PAvanesh")
+# Define the map (graph)
+neighbors = {
+    'WA': ['NT', 'SA'],
+    'NT': ['WA', 'SA', 'Q'],
+    'SA': ['WA', 'NT', 'Q', 'NSW', 'V'],
+    'Q':  ['NT', 'SA', 'NSW'],
+    'NSW': ['Q', 'SA', 'V'],
+    'V':  ['SA', 'NSW'],
+    'T':  []  # Tasmania has no borders
+}
+
+# Define available colors
+colors = ['Red', 'Green', 'Blue']
+
+# Initialize empty assignment
+assignment = {}
+
+def is_consistent(region, color, assignment):
+    for neighbor in neighbors[region]:
+        if neighbor in assignment and assignment[neighbor] == color:
+            return False
+    return True
+
+def select_unassigned_variable(assignment):
+    for var in neighbors.keys():
+        if var not in assignment:
+            return var
+    return None
+
+def backtrack(assignment):
+    if len(assignment) == len(neighbors):
+        return assignment
+
+    var = select_unassigned_variable(assignment)
+    for color in colors:
+        if is_consistent(var, color, assignment):
+            assignment[var] = color
+            result = backtrack(assignment)
+            if result:
+                return result
+            del assignment[var]  # Backtrack
+
+    return None
+
+# Solve the problem
+solution = backtrack(assignment)
+print("Solution:" if solution else "No solution found.")
+print(solution)
