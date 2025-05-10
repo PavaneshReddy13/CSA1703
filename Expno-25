@@ -1,0 +1,52 @@
+% Monkey and Banana Problem
+
+% Banana is hanging at the 'middle' position
+banana_position(middle).
+
+% Goal state: Monkey has the banana
+action(state(_, onbox, _, has), done) :-
+    write('Monkey has the banana!'), nl.
+
+% Monkey moves to the box
+action(state(Pos1, onfloor, Pos1, hasnot), move_to_box) :-
+    write('Monkey moves to the box.'), nl.
+
+% Monkey pushes the box to banana position
+action(state(Pos, onfloor, Pos, hasnot), push_box(NewPos)) :-
+    banana_position(NewPos),
+    write('Monkey pushes the box to '), write(NewPos), nl.
+
+% Monkey climbs the box
+action(state(Pos, onfloor, Pos, hasnot), climb_box) :-
+    write('Monkey climbs on the box.'), nl.
+
+% Monkey grabs the banana
+action(state(Pos, onbox, Pos, hasnot), grab_banana) :-
+    write('Monkey grabs the banana!'), nl.
+
+% Plan to solve the problem
+solve(state(_, _, _, has)) :-
+    write('Goal reached!'), nl.
+
+solve(State) :-
+    action(State, Action),
+    perform(State, Action, NewState),
+    solve(NewState).
+
+% State transitions
+perform(state(Pos, onfloor, Pos, hasnot), move_to_box,
+        state(Pos, onfloor, Pos, hasnot)).
+
+perform(state(Pos, onfloor, Pos, hasnot), push_box(NewPos),
+        state(NewPos, onfloor, NewPos, hasnot)).
+
+perform(state(Pos, onfloor, Pos, hasnot), climb_box,
+        state(Pos, onbox, Pos, hasnot)).
+
+perform(state(Pos, onbox, Pos, hasnot), grab_banana,
+        state(Pos, onbox, Pos, has)).
+
+% Starting point
+start :-
+    InitialState = state(corner, onfloor, window, hasnot),
+    solve(InitialState).
