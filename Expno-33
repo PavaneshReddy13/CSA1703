@@ -1,0 +1,20 @@
+% Base case: An empty list has 0 vowels.
+count_vowels([], 0).
+
+% If the head of the list is a vowel, increment the count.
+count_vowels([Head|Tail], Count) :-
+    is_vowel(Head),
+    count_vowels(Tail, TailCount),
+    Count is TailCount + 1.
+
+% If the head is not a vowel, just continue with the tail.
+count_vowels([Head|Tail], Count) :-
+    \+ is_vowel(Head),
+    count_vowels(Tail, Count).
+
+% Check if a character is a vowel (lowercase vowels)
+is_vowel(a).
+is_vowel(e).
+is_vowel(i).
+is_vowel(o).
+is_vowel(u).
