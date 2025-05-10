@@ -1,0 +1,15 @@
+% Facts: fruit(Name, Color)
+fruit(apple, red).
+fruit(banana, yellow).
+fruit(grape, purple).
+fruit(orange, orange).
+fruit(kiwi, green).
+fruit(blueberry, blue).
+
+% Query rule to find fruits by color
+find_fruit_by_color(Color) :-
+    fruit(Fruit, Color),
+    write(Fruit), nl, fail.
+
+% Prevent Prolog from succeeding silently
+find_fruit_by_color(_).
