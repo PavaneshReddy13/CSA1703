@@ -1,0 +1,57 @@
+% Facts: symptoms for each disease
+disease(flu) :-
+    symptom(fever),
+    symptom(cough),
+    symptom(sore_throat),
+    symptom(body_ache).
+
+disease(cold) :-
+    symptom(cough),
+    symptom(sneezing),
+    symptom(runny_nose).
+
+disease(malaria) :-
+    symptom(fever),
+    symptom(chills),
+    symptom(sweating),
+    symptom(headache).
+
+disease(typhoid) :-
+    symptom(fever),
+    symptom(abdominal_pain),
+    symptom(fatigue),
+    symptom(loss_of_appetite).
+
+% Prompt the user to enter symptoms
+ask_symptoms :-
+    write('Answer the following with yes. or no.'), nl,
+    ask(fever),
+    ask(cough),
+    ask(sore_throat),
+    ask(body_ache),
+    ask(sneezing),
+    ask(runny_nose),
+    ask(chills),
+    ask(sweating),
+    ask(headache),
+    ask(abdominal_pain),
+    ask(fatigue),
+    ask(loss_of_appetite).
+
+ask(Symptom) :-
+    format('Do you have ~w? ', [Symptom]),
+    read(Reply),
+    (Reply == yes -> assertz(symptom(Symptom)) ; true).
+
+% Start diagnosis
+diagnose :-
+    retractall(symptom(_)),  % clear old symptoms
+    ask_symptoms,
+    (   disease(Disease)
+    ->  format('You might have ~w.~n', [Disease])
+    ;   write('Diagnosis inconclusive. Please consult a doctor.'), nl).
+
+% Entry point
+start :-
+    write('--- Medical Diagnosis System ---'), nl,
+    diagnose.
