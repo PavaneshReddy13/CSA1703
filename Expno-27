@@ -1,0 +1,43 @@
+% Define edges: edge(Node1, Node2, Cost)
+edge(a, b, 1).
+edge(a, c, 3).
+edge(b, d, 3).
+edge(c, d, 1).
+edge(b, e, 6).
+edge(d, e, 1).
+edge(e, f, 2).
+
+% Define heuristic: h(Node, HeuristicValue)
+h(a, 6).
+h(b, 4).
+h(c, 4).
+h(d, 2).
+h(e, 1).
+h(f, 0).  % Goal node
+
+% Best First Search main function
+best_first(Start, Goal, Path) :-
+    bestfs([[Start]], Goal, RevPath),
+    reverse(RevPath, Path),
+    write('Best First Search Path: '), write(Path), nl.
+
+% bestfs(OpenList, Goal, FinalPath)
+bestfs([[Goal|Rest] | _], Goal, [Goal|Rest]).
+bestfs([CurrentPath | RestPaths], Goal, FinalPath) :-
+    CurrentPath = [CurrentNode | _],
+    findall([NextNode | CurrentPath],
+            (edge(CurrentNode, NextNode, _), \+ member(NextNode, CurrentPath)),
+            NewPaths),
+    append(RestPaths, NewPaths, AllPaths),
+    sort_paths(AllPaths, SortedPaths),
+    bestfs(SortedPaths, Goal, FinalPath).
+
+% Sort paths using the heuristic of the head node
+sort_paths(Paths, Sorted) :-
+    map_list_to_pairs(path_heuristic, Paths, Pairs),
+    keysort(Pairs, SortedPairs),
+    pairs_values(SortedPairs, Sorted).
+
+% Heuristic function for a path (uses head of the path)
+path_heuristic([Node | _], H) :-
+    h(Node, H).
