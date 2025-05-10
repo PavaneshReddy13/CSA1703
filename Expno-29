@@ -1,0 +1,64 @@
+% Dynamic facts to allow asserting during runtime
+:- dynamic fact/1.
+
+% Rules for forward chaining inference
+rule(visit_doctor) :-
+    fact(fever),
+    fact(cough),
+    fact(body_ache).
+
+rule(rest_at_home) :-
+    fact(fever),
+    fact(fatigue),
+    \+ fact(cough).
+
+rule(take_fluids) :-
+    fact(fever);
+    fact(headache).
+
+% Start the chaining
+forward :-
+    infer_new_fact,
+    !,
+    forward. % Repeat until no more new facts
+forward :-
+    write('Forward chaining completed.'), nl,
+    display_facts.
+
+% Inference step: Try to assert a new fact from rules
+infer_new_fact :-
+    rule(Fact),
+    \+ fact(Fact),
+    assertz(fact(Fact)),
+    format('Inferred: ~w~n', [Fact]).
+
+% Ask user for symptoms
+ask_facts :-
+    write('Enter symptoms (yes. or no.):'), nl,
+    ask(fever),
+    ask(cough),
+    ask(body_ache),
+    ask(fatigue),
+    ask(headache).
+
+ask(Symptom) :-
+    format('Do you have ~w? ', [Symptom]),
+    read(Response),
+    (Response == yes -> assertz(fact(Symptom)) ; true).
+
+% Show final inferred facts
+display_facts :-
+    write('Known facts after inference:'), nl,
+    list_facts.
+
+list_facts :-
+    fact(F),
+    write('- '), write(F), nl,
+    fail.
+list_facts.
+
+% Entry point
+start :-
+    retractall(fact(_)),  % Clear previous facts
+    ask_facts,
+    forward.
