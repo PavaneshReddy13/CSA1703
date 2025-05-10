@@ -1,0 +1,28 @@
+% Dynamic predicate to store answers
+:- dynamic yes/1, no/1.
+
+% Disease rules
+disease(flu) :- verify(fever), verify(cough), verify(body_ache).
+disease(cold) :- verify(cough), verify(sneezing).
+disease(malaria) :- verify(fever), verify(chills).
+
+% Ask the user about a symptom
+verify(Symptom) :-
+    yes(Symptom), !.
+
+verify(Symptom) :-
+    no(Symptom), !, fail.
+
+verify(Symptom) :-
+    format('Do you have ~w? (yes/no): ', [Symptom]),
+    read(Response),
+    (Response == yes -> assertz(yes(Symptom)) ;
+     assertz(no(Symptom)), fail).
+
+% Start diagnosis
+start :-
+    retractall(yes(_)),
+    retractall(no(_)),
+    (disease(D) ->
+        format('You might have ~w.~n', [D]) ;
+        write('Diagnosis not found.')).
