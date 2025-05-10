@@ -1,0 +1,16 @@
+% Base case: An empty list matches with an empty list.
+match([], []).
+
+% Recursive case: If the first element of both lists matches, 
+% continue checking the rest of the list.
+match([Head|Tail], [Head|PatternTail]) :-
+    match(Tail, PatternTail).
+
+% Example query to check if an element is part of a list
+match_element(Element, [Element|_]).  % If Element is the head of the list
+match_element(Element, [_|Tail]) :-  % Recursively check the tail
+    match_element(Element, Tail).
+
+% Example query to check if a sublist exists in a list
+match_sublist(Sublist, List) :- 
+    match(List, Sublist).
